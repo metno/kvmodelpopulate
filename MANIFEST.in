@@ -1,0 +1,5 @@
+recursive-include share *
+
+include build_debian.sh
+recursive-include debian *
+

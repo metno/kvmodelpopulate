@@ -1,0 +1,16 @@
+Source: kvalobs-model-populate
+Section: science
+Priority: extra
+Maintainer: Vegard Bones <vegard.bones@met.no>
+Build-Depends: debhelper (>= 5.0.42), python, python-support (>= 0.5.6)
+Standards-Version: 3.7.2
+Homepage: http://kvalobs.wiki.met.no
+
+Package: kvalobs-model-populate
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python-pygresql 
+Suggests: kvalobs
+Description: read forecasts from api.met.no, and store in kvalobs
+ met.no-specific package for populating kvalobs' model_data table, based on 
+ data from api.met.no. A cron-job is installed, which automatically populates 
+ the database twice a day. The progam may also be run manually.
