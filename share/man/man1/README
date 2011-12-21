@@ -1,0 +1,5 @@
+The man page was generated with the following command, from the top source directory:
+
+> help2man --no-info --include=share/man/man1/kvalobs-model-populate.h2m ./kvalobs_model_populate > share/man/man1/kvalobs_model_populate.1
+
+It is not generated automatically during build or install.
