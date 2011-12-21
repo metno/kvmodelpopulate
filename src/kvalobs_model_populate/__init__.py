@@ -64,7 +64,7 @@ def _progress_indicator(max_count):
     progress_list = ('\r-', '\r\\', '\r|', '\r/')
     entries = len(progress_list)
     index = 1
-    while index <= max_count:
+    while True:
         nextLine = '\r%s [%d%%]' % (progress_list[index % entries], (float(index)/max_count) * 100) 
         yield nextLine
         index += 1 
