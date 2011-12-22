@@ -12,11 +12,7 @@ python setup.py sdist --dist-dir $BUILDDIR
 
 cd $BUILDDIR
 tar xvzf kvalobs-model-populate-*.tar.gz
-
 cd kvalobs-model-populate*
-cp -r $SRCDIR/debian/ . 
-cp -r $SRCDIR/share/ .
-
 	
 fakeroot dpkg-buildpackage -us -uc -sa
 
