@@ -27,6 +27,7 @@
 from datetime import timedelta, datetime
 import time 
 import sys
+import os.path
 import logging
 import logging.handlers
 
@@ -185,6 +186,45 @@ def populate_kvalobs(options):
         sys.stderr.write('\n')
     log.info('Done fetching data')
 
+def _get_kvalobs_connection_info(config_file):
+    
+    ret = {}
+    
+    kvalobs_config_file = config_file
+    if os.path.exists(kvalobs_config_file):
+        
+        f = file(kvalobs_config_file)
+        for line in f:
+            try:
+                key, value = line.split('=', 1)
+                if key.strip() == 'dbconnect':
+                    value = value.strip('" \'\n')
+                    pairs = value.split()
+                    for pair in pairs:
+                        key, value = pair.split('=', 1)
+                        ret[key.strip()] = value.strip()
+            except ValueError:
+                pass
+        f.close()
+    
+    return ret
+
+def add_to_options(options, config_file):
+    
+    for key, value in _get_kvalobs_connection_info(config_file).iteritems():
+        
+        print key, value
+        
+        if key == 'user' and not options.user:
+            options.user = value
+        elif key == 'dbname' and not options.database:
+            options.database = value
+        elif key == 'password':
+            pass # not supported yet
+        elif key == 'host' and not options.host:
+            options.host = value
+        elif key == 'port' and not options.port:
+            options.port = int(value)
 
 def main():
 
@@ -260,6 +300,8 @@ def main():
                       
 
     options, args = parser.parse_args()
+    
+    add_to_options(options, '/etc/kvalobs/kvalobs.conf')
 
     if not len(args) == 0:
         print >> sys.stderr, 'Unrecognized argument(s):', args

@@ -28,6 +28,7 @@
 import logging
 import pgdb
 
+log = logging.getLogger('logger')
 query_log = logging.getLogger('queries')
 
 
@@ -40,6 +41,8 @@ class ModelConnection(object):
             host = '%s:%d' % (host, connect_options.port)
         
         try:
+            
+            log.debug('Connecting to database: database=%s host=%s user=%s' % (connect_options.database, host, connect_options.user))
             self._connection = pgdb.connect(database = connect_options.database, 
                                             host = host, 
                                             user = connect_options.user)
