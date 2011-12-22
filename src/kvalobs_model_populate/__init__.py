@@ -212,9 +212,6 @@ def _get_kvalobs_connection_info(config_file):
 def add_to_options(options, config_file):
     
     for key, value in _get_kvalobs_connection_info(config_file).iteritems():
-        
-        print key, value
-        
         if key == 'user' and not options.user:
             options.user = value
         elif key == 'dbname' and not options.database:
