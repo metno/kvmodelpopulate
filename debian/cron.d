@@ -4,4 +4,5 @@
 
 TZ=UTC
 
-15 4,16 * * *    /usr/bin/kvalobs_model_populate -l/var/log/kvalobs/kvalobs_model_populate.log --log-level=info --no-progress-bar 2>/dev/null
+15 4,16 * * *    kvalobs    /usr/bin/kvalobs_model_populate -l/var/log/kvalobs/kvalobs_model_populate.log --log-level=info --no-progress-bar 2>/dev/null
+
