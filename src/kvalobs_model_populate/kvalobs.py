@@ -37,7 +37,7 @@ class ModelConnection(object):
     def __init__(self, model_name, connect_options):
         
         connect_host = connect_options.host
-        if connect_options.port is not None:
+        if connect_options.port:
             connect_host = '%s:%d' % (connect_host, connect_options.port)
         if not connect_host:
             connect_host = None
