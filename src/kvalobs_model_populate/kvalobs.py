@@ -36,15 +36,17 @@ class ModelConnection(object):
     
     def __init__(self, model_name, connect_options):
         
-        host = connect_options.host
+        connect_host = connect_options.host
         if connect_options.port is not None:
-            host = '%s:%d' % (host, connect_options.port)
+            connect_host = '%s:%d' % (connect_host, connect_options.port)
+        if not connect_host:
+            connect_host = None
         
         try:
             
-            log.debug('Connecting to database: database=%s host=%s user=%s' % (connect_options.database, host, connect_options.user))
+            log.debug('Connecting to database: database=%s host=%s user=%s' % (connect_options.database, connect_host, connect_options.user))
             self._connection = pgdb.connect(database = connect_options.database, 
-                                            host = host, 
+                                            host = connect_host, 
                                             user = connect_options.user)
         except pgdb.DatabaseError:
             raise RuntimeError('Unable to connect to database')
