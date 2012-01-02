@@ -66,7 +66,7 @@ def _progress_indicator(max_count):
     entries = len(progress_list)
     index = 1
     while True:
-        nextLine = '\r%s [%d%%]' % (progress_list[index % entries], (float(index)/max_count) * 100) 
+        nextLine = '\r%s [%d%%] - %d/%d    ' % (progress_list[index % entries], (float(index)/max_count) * 100, index, max_count)
         yield nextLine
         index += 1 
 
@@ -126,22 +126,26 @@ def timed_yielder(original_list, seconds_between_each):
     
     ideal_time = time.time()
 
+    missed_deadlines = 0
+
     for element in original_list:
 
         ideal_time += seconds_between_each
-        time_left_to_return = ideal_time - time.time()
+        now = time.time()
+        time_left_to_return = ideal_time - now
         
         if time_left_to_return > 0:
             time_to_sleep = time_left_to_return 
-            time.sleep(time_to_sleep)
         else:
             # if we spent more than our allotted time, sleep some 
             # more to relieve some pressure from server
-            continue
+            time_to_sleep = seconds_between_each
+            ideal_time = now + seconds_between_each
+            missed_deadlines += 1
+        
+        time.sleep(time_to_sleep)
         
         yield element
-
-
         
 def populate_kvalobs(options):
 
@@ -161,10 +165,15 @@ def populate_kvalobs(options):
 
     if options.enable_progress_bar:
         progress = _progress_indicator(len(sorted_stations))
+    else:
+        progress = None
 
     #connection.delete_model_data()
 
     for station, location in timed_yielder(sorted_stations, options.sleep):
+
+        if progress is not None:
+            sys.stderr.write(progress.next())
 
         if location['lat'] is None or location['lon'] is None:
             log.debug("Ignoring station %d, since we haven't got its coordinates" % (station,))
@@ -176,10 +185,7 @@ def populate_kvalobs(options):
                                      options.from_first_time)
         connection.save_model_data(station, forecast)
         #_printit({station: forecast})
-                
-        if options.enable_progress_bar:
-            sys.stderr.write(progress.next())
-        
+                        
         
     connection.commit()
     if options.enable_progress_bar:
