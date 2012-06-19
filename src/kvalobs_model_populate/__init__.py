@@ -39,7 +39,7 @@ import yr
 log = logging.getLogger('logger')
 query_log = logging.getLogger('queries')
 
-version = '0.3.1'
+version = '0.3.2'
 
 def _printit(forecasts):
 
@@ -223,7 +223,7 @@ def add_to_options(options, config_file):
         elif key == 'dbname' and not options.database:
             options.database = value
         elif key == 'password':
-            pass # not supported yet
+            options.password = value
         elif key == 'host' and not options.host:
             options.host = value
         elif key == 'port' and not options.port:
@@ -256,6 +256,10 @@ def main():
                       metavar = 'USERNAME',
                       dest = 'user',
                       help = 'database user name')
+    database_options.add_option('', '--password',
+                      metavar = 'PASSWORD',
+                      dest = 'password',
+                      help = 'database password')
     parser.add_option_group(database_options)
     
     
