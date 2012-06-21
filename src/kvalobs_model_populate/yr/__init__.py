@@ -39,12 +39,11 @@ def getLocationForecast(location, user_agent_string):
         
     log.debug('Getting data: %s', url)
     
-    for unused in range(9):
+    for timeout in range(1,16):
         try:
             return locationforecast.getData(url, user_agent_string)
         except urllib2.HTTPError, e:
             if e.code == 503:
-                timeout = 1
                 log.info('Got 503: Service Unavailable from server. Retrying in %d seconds'% (timeout,))
                 time.sleep(timeout)
                 continue
@@ -52,4 +51,4 @@ def getLocationForecast(location, user_agent_string):
                 raise e
             
     # last attempt
-    return locationforecast.getData(url)
+    return locationforecast.getData(url, user_agent_string)
