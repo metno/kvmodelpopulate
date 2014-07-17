@@ -1,3 +1,9 @@
+kvalobs-model-populate (0.3.4) precise; urgency=low
+
+  * Handling 404 from api.met.no as 503
+
+ -- Vegard Bones <vegard.bones@met.no>  Thu, 17 Jul 2014 10:44:48 +0200
+
 kvalobs-model-populate (0.3.3) lucid; urgency=low
 
   * new version

@@ -26,6 +26,7 @@
 
 
 import logging
+import math
 import pgdb
 
 log = logging.getLogger('logger')
@@ -46,7 +47,7 @@ class ModelConnection(object):
             
             log.debug('Connecting to database: database=%s host=%s user=%s ' % (connect_options.database, connect_host, connect_options.user))
             self._connection = pgdb.connect(database = connect_options.database, 
-                                            host = connect_host, 
+                                            #host = connect_host, 
                                             user = connect_options.user,
                                             password=connect_options.password)
         except pgdb.DatabaseError:
@@ -111,12 +112,18 @@ class ModelConnection(object):
             # Save each row        
             for time, parameters in forecasts.items():
                 for parameter, value in parameters.items():
+                    
                     insert_statement = \
                     '''INSERT INTO 
                     model_data (stationid, obstime, paramid, level, modelid, original) 
                     VALUES 
                     (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f)''' % \
                     (station, time, parameter, self.modelid, value)
+
+                    if math.isnan(value):
+                        log.warn('Skipping insert of NaN value: ' + insert_statement) 
+                        continue
+
                     query_log.info(insert_statement)
                     cursor.execute(insert_statement)
         except:

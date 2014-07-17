@@ -43,9 +43,14 @@ def getLocationForecast(location, user_agent_string):
         try:
             return locationforecast.getData(url, user_agent_string)
         except urllib2.HTTPError, e:
+            log.warn('Error on URL ' + url)
             if e.code == 503:
                 log.info('Got 503: Service Unavailable from server. Retrying in %d seconds'% (timeout,))
                 time.sleep(timeout)
+                continue
+            elif e.code == 404:
+                log.info('Got 404: Not found from server (this should never happen). Retrying in %d seconds'% (timeout * 10,))
+                time.sleep(timeout * 10)
                 continue
             else:
                 raise e
