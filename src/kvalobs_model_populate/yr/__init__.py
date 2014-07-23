@@ -48,10 +48,6 @@ def getLocationForecast(location, user_agent_string):
                 log.info('Got 503: Service Unavailable from server. Retrying in %d seconds'% (timeout,))
                 time.sleep(timeout)
                 continue
-            elif e.code == 404:
-                log.info('Got 404: Not found from server (this should never happen). Retrying in %d seconds'% (timeout * 10,))
-                time.sleep(timeout * 10)
-                continue
             else:
                 raise e
             
