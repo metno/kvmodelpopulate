@@ -16,4 +16,4 @@ cd kvalobs-model-populate*
 	
 fakeroot dpkg-buildpackage -us -uc -sa
 
-lintian -i ../kvalobs-model-populate_0.3.5_all.deb ../kvalobs-model-populate_0.3.5.dsc 
+lintian -i ../kvalobs-model-populate_0.3.6_all.deb ../kvalobs-model-populate_0.3.6.dsc 

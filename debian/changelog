@@ -1,3 +1,9 @@
+kvalobs-model-populate (0.3.6) precise; urgency=low
+
+  * new version
+
+ -- Vegard Bones <vegard.bones@met.no>  Wed, 23 Jul 2014 11:13:57 +0200
+
 kvalobs-model-populate (0.3.5) precise; urgency=low
 
   * corrected database connection options
