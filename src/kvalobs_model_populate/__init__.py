@@ -39,7 +39,7 @@ import yr
 log = logging.getLogger('logger')
 query_log = logging.getLogger('queries')
 
-version = '0.3.4'
+version = '0.3.5'
 
 def _printit(forecasts):
 

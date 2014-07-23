@@ -47,7 +47,7 @@ class ModelConnection(object):
             
             log.debug('Connecting to database: database=%s host=%s user=%s ' % (connect_options.database, connect_host, connect_options.user))
             self._connection = pgdb.connect(database = connect_options.database, 
-                                            #host = connect_host, 
+                                            host = connect_host, 
                                             user = connect_options.user,
                                             password=connect_options.password)
         except pgdb.DatabaseError:
