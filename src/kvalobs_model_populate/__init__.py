@@ -181,7 +181,13 @@ def populate_kvalobs(options):
 
         log.debug('Station %d' % (station,))
 
-        forecast = extractWantedData(yr.getLocationForecast(location, 'met.no kvalobs model fetcher (' + version + ')'),
+        try:
+            locationforecast = yr.getLocationForecast(location, 'met.no kvalobs model fetcher (' + version + ')')
+        except:
+            log.error('Unable to fetch data. Skipping station %s' % (station,))
+            continue
+
+        forecast = extractWantedData(locationforecast,
                                      options.from_first_time)
         connection.save_model_data(station, forecast)
         #_printit({station: forecast})
@@ -191,6 +197,7 @@ def populate_kvalobs(options):
     if options.enable_progress_bar:
         sys.stderr.write('\n')
     log.info('Done fetching data')
+
 
 def _get_kvalobs_connection_info(config_file):
     
