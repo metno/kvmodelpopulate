@@ -135,36 +135,50 @@ def populate_kvalobs(options):
 
     log.info('Fetching model data from yr to kvalobs')
 
-    sorted_stations = stations.items()
+    stations_without_coordinates = []
+    for station, location in stations.items():
+        if location['lat'] is None or location['lon'] is None:
+            stations_without_coordinates.append(station)
+    if stations_without_coordinates:
+        for s in stations_without_coordinates:
+            del stations[s]
+            log.debug("Ignoring station %d, since we haven't got its coordinates" % (station,))
+
+    sorted_stations = stations.keys()
     sorted_stations.sort()
-     
 
     if options.enable_progress_bar:
         progress = _progress_indicator(len(sorted_stations))
     else:
         progress = None
 
-    for station, location in timed_yielder(sorted_stations, options.sleep):
+    for i in range(3):
+        failed = []
+        for station in timed_yielder(sorted_stations, options.sleep):
+            log.debug('Station %d' % (station,))
+            location = stations[station]
 
-        if progress is not None:
-            sys.stderr.write(progress.next())
+            try:
+                locationforecast = yr.getLocationForecast(location, 'met.no kvalobs model fetcher')
+            except:
+                log.warn('failed attempt at %d', station)
+                failed.append(location)
+                continue
 
-        if location['lat'] is None or location['lon'] is None:
-            log.debug("Ignoring station %d, since we haven't got its coordinates" % (station,))
-            continue
+            if progress is not None:
+                sys.stderr.write(progress.next())
 
-        log.debug('Station %d' % (station,))
+            forecast = extractWantedData(locationforecast,
+                                        options.from_first_time)
+            connection.save_model_data(station, forecast)
+        if not failed:
+            break
+        sorted_stations = failed
+        if len(failed) > 100:
+            time.sleep(300)
 
-        try:
-            locationforecast = yr.getLocationForecast(location, 'met.no kvalobs model fetcher')
-        except:
-            log.error('Unable to fetch data. Skipping station %s' % (station,))
-            continue
-
-        forecast = extractWantedData(locationforecast,
-                                     options.from_first_time)
-        connection.save_model_data(station, forecast)
-                        
+    if failed:
+        log.error('Unable to fetch data for the following stations: ' + str(failed))
         
     connection.commit()
     if options.enable_progress_bar:
