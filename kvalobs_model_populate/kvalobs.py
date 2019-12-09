@@ -27,7 +27,7 @@
 
 import logging
 import math
-import pgdb
+import psycopg2
 
 log = logging.getLogger('logger')
 query_log = logging.getLogger('queries')
@@ -36,21 +36,19 @@ query_log = logging.getLogger('queries')
 class ModelConnection(object):
     
     def __init__(self, model_name, connect_options):
-        
-        connect_host = connect_options.host
+        connection_string = 'dbname=' + connect_options.database
+        if connect_options.user:
+            connection_string += ' user=' + connect_options.user
+        if connect_options.host:
+            connection_string += ' host=' + connect_options.host
         if connect_options.port:
-            connect_host = '%s:%d' % (connect_host, connect_options.port)
-        if not connect_host:
-            connect_host = None
-        
+            connection_string += ' port=' + str(connect_options.port)
+        log.debug('Connecting to database: ' + connection_string)
+        if connect_options.password:
+            connection_string += ' password=' + connect_options.password        
         try:
-            
-            log.debug('Connecting to database: database=%s host=%s user=%s ' % (connect_options.database, connect_host, connect_options.user))
-            self._connection = pgdb.connect(database = connect_options.database, 
-                                            host = connect_host, 
-                                            user = connect_options.user,
-                                            password=connect_options.password)
-        except pgdb.DatabaseError:
+            self._connection = psycopg2.connect(connection_string)
+        except:
             raise RuntimeError('Unable to connect to database')
 
         # Find model id
@@ -63,7 +61,6 @@ class ModelConnection(object):
             raise RuntimeError('model type <%s> have not been defined in kvalobs' % (model_name,))
         self.modelid = result[0]
 
-
     def commit(self):
         query_log.info('COMMIT')
         self._connection.commit()
@@ -72,7 +69,6 @@ class ModelConnection(object):
         cursor = self._connection.cursor()
         
         query = "SELECT stationid, lat, lon FROM station WHERE lat IS NOT NULL AND lon IS NOT NULL"
-        #query += ' LIMIT 1'
         
         if station_list is not None and len(station_list) > 0:
             if len(station_list) == 1:
@@ -84,7 +80,7 @@ class ModelConnection(object):
         cursor.execute(query)
         
         ret = {}
-        
+
         row = cursor.fetchone()
         while row:
             ret[row[0]] = {'lat': row[1], 'lon': row[2]}
@@ -92,38 +88,18 @@ class ModelConnection(object):
             
         return ret
 
-
-    def delete_model_data(self, from_time = None, to_time = None):
-        # Remove old data 
-        # A transaction is running, so it will be back if the operation fails somehow
-        query = "DELETE FROM model_data WHERE modelid=%d" % (self.modelid,) 
-        if from_time is not None and to_time is not None:
-            query += "AND obstime BETWEEN '%s' AND '%s'" % (from_time, to_time)
-        
-        query_log.info(query)
-        
-        cursor = self._connection.cursor()
-        cursor.execute(query)
-        
     
     def save_model_data(self, station, forecasts):
         cursor = self._connection.cursor()
         try:    
-            # Save each row        
+            # Save each row       
             for time, parameters in forecasts.items():
                 for parameter, value in parameters.items():
-                    
-                    insert_statement = \
-                    '''INSERT INTO 
-                    model_data (stationid, obstime, paramid, level, modelid, original) 
-                    VALUES 
-                    (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f)''' % \
-                    (station, time, parameter, self.modelid, value)
-
                     if math.isnan(value):
                         log.warn('Skipping insert of NaN value: ' + insert_statement) 
                         continue
-
+                    
+                    insert_statement = '''INSERT INTO model_data (stationid, obstime, paramid, level, modelid, original) VALUES (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f)''' % (station, time, parameter, self.modelid, value)
                     query_log.info(insert_statement)
                     cursor.execute(insert_statement)
         except:

@@ -13,7 +13,7 @@ binary:	binary-arch binary-indep
 	dh_installchangelogs 
 	dh_installdocs
 	dh_install
-	dh_pysupport $(INSTALLATION_DIRECTORY)
+	dh_python2 -p kvalobs-model-populate
 	dh_installcron
 	dh_installman share/man/man1/kvalobs_model_populate.1
 	dh_fixperms

@@ -26,27 +26,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA  02110-1301, USA
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
-import sys
-sys.path.insert(0, 'src/')
-import kvalobs_model_populate
-
-
-setup(name='kvalobs-model-populate',
-      description = 'Populate a kvalobs database with data from api.met.no',
-      version = kvalobs_model_populate.version,
-      url = 'https://kvalobs.wiki.met.no/',
-
-      author = 'Vegard Bones',
-      author_email = 'vegard.bones@met.no',
-      
+setup(
+      name="kvalobs_model_populate",
+      version='0.3.8',
+      packages=find_packages(),
+      scripts=['kvmodelpopulate'],
+      description='Populate a kvalobs database with data from api.met.no',
       license = 'gpl2',
-      
-      requires = ['pgdb'],
-      
-      package_dir = {'': 'src'},
-      packages = ['kvalobs_model_populate', 'kvalobs_model_populate.yr'],
-      scripts = ['kvalobs_model_populate']
-     )
-
+      requires = ['psycopg']
+)
