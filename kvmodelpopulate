@@ -1,6 +1,21 @@
-#!/bin/sh
+#!/bin/bash
+
+KVMODELPOPULATE_PID_FILE=${KVMODELPOPULATE_PID_FILE:="/var/lib/kvalobs/run/kvmodelpopulate.pid"}
+
+function remove_pid_file  {
+  #echo " - rm -f $KVMODELPOPULATE_PID_FILE"
+  rm -f $KVMODELPOPULATE_PID_FILE
+}
 
 set -e
 
+trap  remove_pid_file EXIT
+
+if [ -f "$KVMODELPOPULATE_PID_FILE" ]; then
+  echo "$(date -u +'%F %T'): An instance of kvmodelpopulate is allready running!"  2>&1
+  exit 
+fi
+
+echo "$$" > $KVMODELPOPULATE_PID_FILE
 
 python2 -m kvalobs_model_populate $@

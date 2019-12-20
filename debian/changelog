@@ -1,3 +1,13 @@
+kvalobs-model-populate (0.3.9) xenial; urgency=medium
+
+  * Use upsert when inserting data into model_data.
+  * Add statusfile.
+  * Bugfix in retries of failed attempts to get data from api.met.no.
+  * Use many small transaction insetad of one transaction for all stations. 
+
+ -- Borge Moe <borge.moe@met.no>  Fri, 20 Dec 2019 09:40:00 +0100
+
+
 kvalobs-model-populate (0.3.8) xenial; urgency=medium
 
   * new version

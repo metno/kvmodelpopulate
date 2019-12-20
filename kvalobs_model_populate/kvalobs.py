@@ -60,15 +60,21 @@ class ModelConnection(object):
         if result is None:
             raise RuntimeError('model type <%s> have not been defined in kvalobs' % (model_name,))
         self.modelid = result[0]
+        self._connection.commit()
 
     def commit(self):
         query_log.info('COMMIT')
         self._connection.commit()
 
+    def rollback(self):
+        query_log.info('ROLLBACK')
+        self._connection.rollback()
+        
     def get_station_locations(self, station_list = None):
         cursor = self._connection.cursor()
         
         query = "SELECT stationid, lat, lon FROM station WHERE lat IS NOT NULL AND lon IS NOT NULL"
+        #query = "SELECT stationid, lat, lon FROM station WHERE lat IS NOT NULL AND lon IS NOT NULL ORDER BY stationid limit 10"
         
         if station_list is not None and len(station_list) > 0:
             if len(station_list) == 1:
@@ -85,7 +91,7 @@ class ModelConnection(object):
         while row:
             ret[row[0]] = {'lat': row[1], 'lon': row[2]}
             row = cursor.fetchone()
-            
+        self.commit()
         return ret
 
     
@@ -99,9 +105,10 @@ class ModelConnection(object):
                         log.warn('Skipping insert of NaN value: ' + insert_statement) 
                         continue
                     
-                    insert_statement = '''INSERT INTO model_data (stationid, obstime, paramid, level, modelid, original) VALUES (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f)''' % (station, time, parameter, self.modelid, value)
+                    insert_statement = '''INSERT INTO model_data (stationid, obstime, paramid, level, modelid, original) VALUES (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f) ON CONFLICT ON CONSTRAINT model_data_stationid_obstime_paramid_level_modelid_key DO UPDATE SET original=EXCLUDED.original;''' % (station, time, parameter, self.modelid, value)
                     query_log.info(insert_statement)
                     cursor.execute(insert_statement)
+            self.commit()
         except:
-            self._connection.rollback()
+            self.rollback()
             raise
