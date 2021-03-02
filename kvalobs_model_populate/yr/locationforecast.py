@@ -33,7 +33,7 @@ import logging
 
 log = logging.getLogger('logger')
 
-base_url = 'https://api.met.no/weatherapi/locationforecast/1.9'
+base_url = 'https://api.met.no/weatherapi/locationforecast/2.0/classic'
 
 
 _handlers = {('precipitation', datetime.timedelta(hours = 6)): ('RR_6', 'value'),

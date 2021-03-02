@@ -35,7 +35,7 @@ log = logging.getLogger('logger')
 
 
 def getLocationForecast(location, user_agent_string):
-    url = '%s/?lat=%f;lon=%f' % (locationforecast.base_url, location['lat'], location['lon'])
+    url = '%s/?lat=%f&lon=%f' % (locationforecast.base_url, location['lat'], location['lon'])
         
     log.debug('Getting data: %s', url)
     

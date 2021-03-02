@@ -8,7 +8,7 @@ BUILDDIR=build_debian
 rm -rf $BUILDDIR
 mkdir $BUILDDIR
 
-python setup.py sdist --dist-dir $BUILDDIR
+python2 setup.py sdist --dist-dir $BUILDDIR
 
 cd $BUILDDIR
 tar xvzf kvalobs_model_populate-*.tar.gz

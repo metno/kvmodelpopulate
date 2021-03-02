@@ -5,7 +5,7 @@ build:
 INSTALLATION_DIRECTORY = debian/kvalobs-model-populate
 
 install: build
-	python setup.py install --prefix=/usr --root=debian/tmp --no-compile -O0 
+	python2 setup.py install --prefix=/usr --root=debian/tmp --no-compile -O0 
 
 binary:	binary-arch binary-indep
 	dh_testdir

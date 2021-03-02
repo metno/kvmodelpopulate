@@ -1,3 +1,11 @@
+kvalobs-model-populate (0.3.10) xenial; urgency=medium
+
+  * Update base url to location forcast
+  * Use & as separator for parameters in urls instead of ;.
+  
+ -- Borge Moe <borge.moe@met.no>  Tue, 3 Mar 2021 12:30:00 +0100
+
+
 kvalobs-model-populate (0.3.9) xenial; urgency=medium
 
   * Use upsert when inserting data into model_data.
