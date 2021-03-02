@@ -1,3 +1,9 @@
+kvalobs-model-populate (0.3.11) xenial; urgency=medium
+
+  * Fix python dependencies.
+   
+ -- Borge Moe <borge.moe@met.no>  Tue, 3 Mar 2021 13:45:00 +0100
+
 kvalobs-model-populate (0.3.10) xenial; urgency=medium
 
   * Update base url to location forcast
