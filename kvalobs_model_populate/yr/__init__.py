@@ -24,12 +24,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA  02110-1301, USA
 
-import urllib2
-import xml.sax
+import urllib.request, urllib.parse, urllib.error
 import time
 import logging
 
-import locationforecast
+from . import locationforecast
    
 log = logging.getLogger('logger')
 
@@ -42,7 +41,7 @@ def getLocationForecast(location, user_agent_string):
     for timeout in range(1,16):
         try:
             return locationforecast.getData(url, user_agent_string)
-        except urllib2.HTTPError, e:
+        except urllib.HTTPError as e:
             log.warn('Error on URL ' + url)
             if e.code == 503:
                 log.info('Got 503: Service Unavailable from server. Retrying in %d seconds'% (timeout,))

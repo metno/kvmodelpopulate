@@ -31,8 +31,8 @@ import os.path
 import logging
 import logging.handlers
 
-import kvalobs
-import yr
+import kvalobs_model_populate.kvalobs as kvalobs
+import kvalobs_model_populate.yr as yr
 
 log = logging.getLogger('logger')
 status_log = logging.getLogger('status')
@@ -51,7 +51,6 @@ def _progress_indicator(max_count):
 
 
 def extractWantedData(forecast, from_first_time):
-
     first_time = min(forecast.keys())
 
     offset = (first_time.hour + 6) % 12
@@ -70,7 +69,7 @@ def extractWantedData(forecast, from_first_time):
 
     current_time = max(first_time, refereence_point)
     while current_time < key_times[2]:
-        if forecast.has_key(current_time):
+        if current_time in forecast:
             ret[current_time] = forecast[current_time]
             #log.debug('time ' + current_time.isoformat())
         current_time += timedelta(hours=1)
@@ -83,7 +82,7 @@ def extractWantedData(forecast, from_first_time):
 
         ret[key_times[2]] = {'RR_12': RR_12[0]}
         ret[key_times[4]] = {'RR_24': RR_24}
-    except KeyError, e:
+    except KeyError as e:
         log.warn(
             'Error when creating RR data aggregates: object was not reported from yr: ' + str(e),)
 
@@ -91,11 +90,11 @@ def extractWantedData(forecast, from_first_time):
         last_time = refereence_point
         for t in range(3, 13, 3):
             working_time = refereence_point + timedelta(hours=t)
-            if forecast.has_key(last_time):
+            if last_time in forecast:
                 ret[working_time]['PP'] = forecast[last_time]['PR'] - \
                     forecast[working_time]['PR']
             last_time = working_time
-    except KeyError, e:
+    except KeyError as e:
         log.warn(
             'Error when creating PP data aggregates: object was not reported from yr: ' + str(e),)
 
@@ -141,7 +140,7 @@ def populate_kvalobs(options):
     log.info('Fetching model data from yr to kvalobs')
 
     stations_without_coordinates = []
-    for station, location in stations.items():
+    for station, location in list(stations.items()):
         if location['lat'] is None or location['lon'] is None:
             stations_without_coordinates.append(station)
 
@@ -151,14 +150,13 @@ def populate_kvalobs(options):
             log.debug(
                 "Ignoring station %d, since we haven't got its coordinates" % (station,))
 
-    sorted_stations = stations.keys()
+    sorted_stations = list(stations.keys())
     sorted_stations.sort()
 
     if options.enable_progress_bar:
         progress = _progress_indicator(len(sorted_stations))
     else:
         progress = None
-
    
     for i in range(3):
         failed = []
@@ -171,12 +169,12 @@ def populate_kvalobs(options):
                     location, 'met.no kvalobs model fetcher')
                 nOk += 1
             except:
-                log.warn('failed attempt station %d', station)
+                log.warning('failed attempt station %d', station)
                 failed.append(station)
                 continue
 
             if progress is not None:
-                sys.stderr.write(progress.next())
+                sys.stderr.write(next(progress))
 
             forecast = extractWantedData(locationforecast,
                                          options.from_first_time)
@@ -215,7 +213,7 @@ def _get_kvalobs_connection_info(config_file):
     kvalobs_config_file = config_file
     if os.path.exists(kvalobs_config_file):
 
-        f = file(kvalobs_config_file)
+        f = open(kvalobs_config_file)
         for line in f:
             try:
                 key, value = line.split('=', 1)
@@ -234,7 +232,7 @@ def _get_kvalobs_connection_info(config_file):
 
 def add_to_options(options, config_file):
 
-    for key, value in _get_kvalobs_connection_info(config_file).iteritems():
+    for key, value in list(_get_kvalobs_connection_info(config_file).items()):
         if key == 'user' and not options.user:
             options.user = value
         elif key == 'dbname' and not options.database:
@@ -252,6 +250,7 @@ def main():
     import optparse
 
     parser = optparse.OptionParser(
+        description='Populate model data in kvalobs',
         usage='Usage: %prog [OPTIONS]', conflict_handler='resolve')
 
     database_options = optparse.OptionGroup(
@@ -335,7 +334,7 @@ def main():
     add_to_options(options, '/etc/kvalobs/kvalobs.conf')
 
     if not len(args) == 0:
-        print >> sys.stderr, 'Unrecognized argument(s):', args
+        print('Unrecognized argument(s):', args, file=sys.stderr)
         sys.exit(1)
 
     LEVELS = {'debug': logging.DEBUG,
@@ -347,8 +346,8 @@ def main():
     try:
         log.setLevel(LEVELS[options.log_level])
     except KeyError:
-        print >> sys.stderr, 'Invalid value for log-level: <%s>. Using <info> instead.' % (
-            options.log_level,)
+        print('Invalid value for log-level: <%s>. Using <info> instead.' % (
+            options.log_level,), file=sys.stderr)
         log.setLevel(logging.INFO)
 
     if options.logfile:
@@ -380,15 +379,15 @@ def main():
         status_log.addHandler(statusHandler)
         status_log.setLevel(logging.INFO)
 
-    try:
-        status_log.info("START")
-        populate_kvalobs(options)
-        status_log.info("STOP")
-    except Exception, msg:
-        log.fatal(msg)
-        status_log.fatal(msg)
-        status_log.info("STOP")
-        raise
+    # try:
+    status_log.info("START")
+    populate_kvalobs(options)
+    status_log.info("STOP")
+    # except Exception as msg:
+    #     log.fatal(msg)
+    #     status_log.fatal(msg)
+    #     status_log.info("STOP")
+    #     raise
 
 
 if __name__ == '__main__':

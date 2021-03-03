@@ -2,13 +2,13 @@ Source: kvalobs-model-populate
 Section: science
 Priority: optional
 Maintainer: Vegard Bones <vegard.bones@met.no>
-Build-Depends: debhelper (>= 5.0.42), python (>= 2.7) | python2
+Build-Depends: debhelper (>= 5.0.42), python3 (>= 3.5), dh-python
 Standards-Version: 3.7.2
 Homepage: http://kvalobs.wiki.met.no
 
 Package: kvalobs-model-populate
 Architecture: all
-Depends: ${misc:Depends}, python (>=2.7) | python2, python-psycopg2
+Depends: ${misc:Depends}, python3 (>=3.8), python3-psycopg2
 Suggests: kvalobs
 Description: read forecasts from api.met.no, and store in kvalobs
  met.no-specific package for populating kvalobs' model_data table, based on 

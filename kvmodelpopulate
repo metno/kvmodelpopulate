@@ -18,4 +18,4 @@ fi
 
 echo "$$" > $KVMODELPOPULATE_PID_FILE
 
-python2 -m kvalobs_model_populate $@
+python3 -m kvalobs_model_populate $@

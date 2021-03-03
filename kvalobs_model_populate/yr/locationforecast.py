@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA  02110-1301, USA
 
-import urllib2
+import urllib.request
 import xml.sax.handler
 import time
 import datetime
@@ -47,8 +47,8 @@ _handlers = {('precipitation', datetime.timedelta(hours = 6)): ('RR_6', 'value')
 
 def getData(url, user_agent_string):
 
-    request = urllib2.Request(url, headers = {'User-Agent': user_agent_string}) 
-    data = urllib2.urlopen(request)
+    request = urllib.request.Request(url, headers = {'User-Agent': user_agent_string}) 
+    data = urllib.request.urlopen(request)
 
     try:
         if data.code == 203:
@@ -98,7 +98,7 @@ class ContentHandler(xml.sax.handler.ContentHandler):
             try:
                 # Parse parameters, which are defined in the _handlers map
                 param_data = _handlers[(name, self.duration)]
-                if self.time.has_key(param_data[0]):
+                if param_data[0] in self.time:
                     log.warning('Duplicate key in data: ' + param_data[0])
                 self.time[param_data[0]] = float(attrs.getValue(param_data[1]))
             except KeyError:
