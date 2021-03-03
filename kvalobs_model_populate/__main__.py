@@ -379,15 +379,15 @@ def main():
         status_log.addHandler(statusHandler)
         status_log.setLevel(logging.INFO)
 
-    # try:
-    status_log.info("START")
-    populate_kvalobs(options)
-    status_log.info("STOP")
-    # except Exception as msg:
-    #     log.fatal(msg)
-    #     status_log.fatal(msg)
-    #     status_log.info("STOP")
-    #     raise
+    try:
+        status_log.info("START")
+        populate_kvalobs(options)
+        status_log.info("STOP")
+    except Exception as msg:
+        log.fatal(msg)
+        status_log.fatal(msg)
+        status_log.info("STOP")
+        raise
 
 
 if __name__ == '__main__':
