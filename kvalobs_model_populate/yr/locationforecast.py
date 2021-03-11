@@ -50,13 +50,8 @@ def getData(url, user_agent_string):
     request = urllib.request.Request(url, headers = {'User-Agent': user_agent_string}) 
     data = urllib.request.urlopen(request)
 
-    try:
-        if data.code == 203:
-            log.warning('The requested url has been deprecated.')
-    except AttributeError:
-        # data.code seems to be undocumented, so we ensure that we don't die 
-        # if the variable is removed from that class in later python versions
-        pass    
+    if data.data.getcode() == 203:
+        log.warning('The requested url has been deprecated.')
 
     doc = ContentHandler()
     xml.sax.parse(data, doc)

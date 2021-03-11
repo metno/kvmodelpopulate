@@ -5,7 +5,7 @@ build:
 INSTALLATION_DIRECTORY = debian/kvalobs-model-populate
 
 install: build
-	python3 setup.py install --prefix=/usr --root=debian/tmp --no-compile -O0 
+	python3 setup.py install --root=debian/tmp --no-compile -O0 
 
 binary:	binary-arch binary-indep
 	dh_testdir
@@ -15,7 +15,7 @@ binary:	binary-arch binary-indep
 	dh_install
 	dh_python3 -p kvalobs-model-populate .
 	dh_installcron
-	dh_installman share/man/man1/kvalobs_model_populate.1
+	# dh_installman share/man/man1/kvalobs_model_populate.1
 	dh_fixperms
 	dh_installdeb
 	dh_gencontrol
