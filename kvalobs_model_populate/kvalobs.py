@@ -99,8 +99,8 @@ class ModelConnection(object):
         cursor = self._connection.cursor()
         try:    
             # Save each row       
-            for time, parameters in list(forecasts.items()):
-                for parameter, value in list(parameters.items()):
+            for time, parameters in forecasts.items():
+                for parameter, value in parameters.items():
                     if math.isnan(value):
                         log.warn('Skipping insert of NaN value: ' + insert_statement) 
                         continue

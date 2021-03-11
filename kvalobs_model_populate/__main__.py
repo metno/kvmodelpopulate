@@ -140,7 +140,7 @@ def populate_kvalobs(options):
     log.info('Fetching model data from yr to kvalobs')
 
     stations_without_coordinates = []
-    for station, location in list(stations.items()):
+    for station, location in stations.items():
         if location['lat'] is None or location['lon'] is None:
             stations_without_coordinates.append(station)
 
@@ -232,7 +232,7 @@ def _get_kvalobs_connection_info(config_file):
 
 def add_to_options(options, config_file):
 
-    for key, value in list(_get_kvalobs_connection_info(config_file).items()):
+    for key, value in _get_kvalobs_connection_info(config_file).items():
         if key == 'user' and not options.user:
             options.user = value
         elif key == 'dbname' and not options.database:
