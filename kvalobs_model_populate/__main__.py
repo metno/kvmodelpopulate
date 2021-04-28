@@ -286,7 +286,7 @@ def main():
     logging_options.add_option('', '--status-file',
                                metavar='STATUSFILE',
                                dest='statusfile',
-                               default='/var/log/kvalobs/kvalobs_model_populate_status.log',
+                               #default='/var/log/kvalobs/kvalobs_model_populate_status.log',
                                help='Write status messages to file. Format: timestamp status #expected #failed, where status is OK, WARN or FAILED.'
                                )
     logging_options.add_option('-l', '--log-file',
