@@ -1,15 +1,10 @@
-FROM ubuntu:focal
+FROM python:3.8
 
-RUN apt update && apt install -y python3 python3-psycopg2 python3-setuptools
+WORKDIR /usr/src/app
 
-COPY kvalobs_model_populate/ /src/kvalobs_model_populate/
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY setup.py /src/
+COPY . .
 
-COPY kvmodelpopulate /src/
-
-WORKDIR /src/
-
-RUN python3 setup.py install
-
-ENTRYPOINT ["python3", "-m", "kvalobs_model_populate"]
+ENTRYPOINT ["python", "-m", "kvalobs_model_populate"]
