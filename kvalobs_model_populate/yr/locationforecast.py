@@ -50,7 +50,7 @@ def getData(url, user_agent_string):
     request = urllib.request.Request(url, headers = {'User-Agent': user_agent_string}) 
     data = urllib.request.urlopen(request)
 
-    if data.data.getcode() == 203:
+    if data.getcode() == 203:
         log.warning('The requested url has been deprecated.')
 
     doc = ContentHandler()
