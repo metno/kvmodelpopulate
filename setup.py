@@ -29,11 +29,11 @@
 from setuptools import setup, find_packages
 
 setup(
-      name="kvalobs_model_populate",
-      version='0.3.11',
-      packages=find_packages(),
-      scripts=['kvmodelpopulate'],
-      description='Populate a kvalobs database with data from api.met.no',
-      license = 'gpl2',
-      requires = ['psycopg']
+    name="kvalobs_model_populate",
+    version="0.3.11",
+    packages=find_packages(),
+    scripts=["kvmodelpopulate"],
+    description="Populate a kvalobs database with data from api.met.no",
+    license="gpl2",
+    requires=["psycopg"],
 )
