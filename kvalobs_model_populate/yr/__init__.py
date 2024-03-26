@@ -34,17 +34,17 @@ log = logging.getLogger('logger')
 
 
 def getLocationForecast(location, user_agent_string):
-    url = '%s/?lat=%f&lon=%f' % (locationforecast.base_url, location['lat'], location['lon'])
+    url = f"{locationforecast.base_url}/?lat={location['lat']:.5f}&lon={location['lon']:.5f}" 
         
-    log.debug('Getting data: %s', url)
+    log.debug(f'Getting data: {url} (User-Agent: {user_agent_string})')
     
     for timeout in range(1,16):
         try:
             return locationforecast.getData(url, user_agent_string)
         except urllib.HTTPError as e:
-            log.warn('Error on URL ' + url)
+            log.warn(f'Error on URL {url}')
             if e.code == 503:
-                log.info('Got 503: Service Unavailable from server. Retrying in %d seconds'% (timeout,))
+                log.info(f'Got 503: Service Unavailable from server. Retrying in {timeout} seconds')
                 time.sleep(timeout)
                 continue
             else:
