@@ -105,7 +105,7 @@ class ModelConnection(object):
                         log.warn('Skipping insert of NaN value: ' + insert_statement) 
                         continue
                     
-                    insert_statement = '''INSERT INTO model_data (stationid, obstime, paramid, level, modelid, original) VALUES (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f) ON CONFLICT ON CONSTRAINT model_data_stationid_obstime_paramid_level_modelid_key DO UPDATE SET original=EXCLUDED.original;''' % (station, time, parameter, self.modelid, value)
+                    insert_statement = '''INSERT INTO model_data (stationid, obstime, paramid, level, modelid, original, tbtime) VALUES (%d, '%s', (SELECT paramid FROM param WHERE name='%s'), 0, %d, %f, current_timestamp(0)) ON CONFLICT ON CONSTRAINT model_data_stationid_obstime_paramid_level_modelid_key DO UPDATE SET original=EXCLUDED.original;''' % (station, time, parameter, self.modelid, value)
                     query_log.info(insert_statement)
                     cursor.execute(insert_statement)
             self.commit()
