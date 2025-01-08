@@ -7,7 +7,8 @@ mode="test"
 target=kvmodelpopulate
 tag=latest
 tag_and_latest=false
-os=focal
+default_os=focal
+os=noble
 #os=bionic
 registry="registry.met.no/met/obsklim/bakkeobservasjoner/data-og-kvalitet/kvalobs/kvbuild"
 nocache=
@@ -43,6 +44,7 @@ Options:
                 tag with version and build date on the form version-YYYYMMDD 
                 and set latest. If the enviroment variable KV_BUILD_DATE is set use
                 this as the build date. Format KV_BUILD_DATE YYYYMMDD.
+  --tag-version Use version from configure.ac as tag. Also tag latest
   --staging     build and push to staging.
   --prod        build and push to prod.
   --test        only build, default
@@ -67,6 +69,9 @@ while test $# -ne 0; do
     --tag-with-build-date)
         tag="$VERSION-$BUILDDATE"
         tag_and_latest=true;;
+    --tag-version) 
+        tag="$VERSION"
+        tag_and_latest=true;;
     --no-cache) nocache="--no-cache";;
     -*) use
       echo "Invalid option $1"
@@ -80,13 +85,14 @@ done
 echo "tag: $tag"
 echo "mode: $mode"
 echo "os: $os"
-echo "kvcpp_tag: $kvcpp_tag"
 echo "Build mode: $mode"
 
 if [ $mode = test ]; then 
-  registry=""
-else 
+  registry="$os/"
+elif  [ "$os" = "$default_os" ]; then
   registry="$registry/$mode/"
+else 
+  registry="$registry/$mode-$os/"
 fi
 
 echo "registry: $registry"
