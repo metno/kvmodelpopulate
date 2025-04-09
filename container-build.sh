@@ -49,6 +49,9 @@ Options:
   --prod        build and push to prod.
   --test        only build, default
   --no-cache    Do not use the docker build cache.
+  --print-version-tag
+                Print the version tag and exit.
+
 "
 echo -e "$usage\n\n"
 
@@ -73,6 +76,9 @@ while test $# -ne 0; do
         tag="$VERSION"
         tag_and_latest=true;;
     --no-cache) nocache="--no-cache";;
+    --print-version-tag)
+        echo "$VERSION-$BUILDDATE"
+        exit 0;;
     -*) use
       echo "Invalid option $1"
       exit 1;;  
