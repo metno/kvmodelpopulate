@@ -13,6 +13,7 @@ BUILDDATE=$(date +'%Y%m%d')
 VERSION="$(./version.sh)"
 tag="$VERSION"
 tags=""
+kvcpp_tag=latest
 tag_counter=0
 push="true"
 build="true"
@@ -49,6 +50,7 @@ Options:
   --tag-and-latest tagname tag the image with the name tagname  and also create latest tag.
   --build-only  Stop after building.
   --push-only   Push a previous build to registry. Must use the same flags as when building.
+  --kvcpp-tag tagname Use tagname. Default: $kvcpp_tag (Not used, only for consistency)
   --staging     build and push to staging.
   --prod        build and push to prod.
   --test        only build, default
@@ -80,6 +82,9 @@ while test $# -ne 0; do
     --help) 
       use
       exit 0;;
+    --kvcpp-tag) 
+        kvcpp_tag=$2;
+        shift;;
     --staging) mode="staging";;
     --prod) mode="prod";;
     --test) mode="test";;
